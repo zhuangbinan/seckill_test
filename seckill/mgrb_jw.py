@@ -11,7 +11,10 @@ import json
 # import pandas as pd
 # import os
 from selenium.webdriver.chrome.service import Service
-#导入 ActionChains 类
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+
+# 导入 ActionChains 类
 from selenium.webdriver import ActionChains
 # 导入 Select 类
 from selenium.webdriver.support.ui import Select
@@ -32,7 +35,9 @@ now_time = datetime.datetime.now().strftime('%Y-%m-%d')
 # 2022-08-23 19:59:57 时间戳如下
 sale_time_stamp = 1661255997000
 
-class mgrb_jw():
+Note = open('1920Index.txt', mode='a', encoding='utf-8')
+
+class MgrbJw():
 
     def iselementById(browser, id):
         """
@@ -101,22 +106,23 @@ class mgrb_jw():
         mgrb_jw_url4 = 'https://www.cnbksy.com/literature/entitysearch/ca08a32b2407a5ef95e7560d9b838381'
 
         driver.get(mgrb_jw_url3)
-        time.sleep(3)
-        if mgrb_jw.iselementByClassName(driver, 'resultRow'):
+        time.sleep(5)
+        if MgrbJw.iselementByClassName(driver, 'resultRow'):
             resultRow = driver.find_elements(By.CLASS_NAME, 'resultRow')
+            print("开始了")
             for index, value in enumerate(resultRow):
-
                 s = resultRow[index].text.replace('\n', '    ')
                 spl = s.split("    ")
                 # print('标题', spl[0])
                 # print('作者', spl[1])
                 # print('刊名', spl[2])
-                print('{}|{}|{}|{}'.format(spl[0], spl[1], spl[2], s[s.find("[")+1:-1].strip()))
+                line1 = '{}|{}|{}|{}'.format(spl[0], spl[1], spl[2], s[s.find("[") + 1:-1].strip())
+                # print(line1)
+                # print(Note.write(line1+'\n'))
             # print(s[-1])
         # 执行退出按钮JS 模拟在控制台 执行
         # 在js中，通过window.open打开新窗口
         # driver.execute_script("bksy.formPost('/logout')")
-
 
         # 在js中，通过window.open打开新窗口
         # newWindowUrl = "window.open('"+mgrb_jw_url4+"')"
@@ -129,28 +135,43 @@ class mgrb_jw():
         for line in fp:
             i = i + 1
             if i == 1:
-                continue;
+                continue
             print(i, line)
             url_line = line.replace("\n", "")
             # 打开这个页面,准备解析HTML
-            newWindowUrl = "window.open('"+url_line+"')"
+            newWindowUrl = "window.open('" + url_line + "')"
             print(newWindowUrl)
             driver.execute_script(newWindowUrl)
-            time.sleep(5)   # 打开新网页以后会停留在新页面上
-
-
-            time.sleep(200)
+            print(driver.window_handles)
+            time.sleep(1)  # 打开新网页以后会停留在新页面上
+            # 打开所有页面后再进行操作
+        time.sleep(2)
+        # 开始处理
+        # 0 到 最大值 , 递进1
+        for num in range(0, 6, 1):
+            driver.switch_to.window(driver.window_handles[num])
+            time.sleep(2)
+            if MgrbJw.iselementByClassName(driver, 'resultRow'):
+                resultRow = driver.find_elements(By.CLASS_NAME, 'resultRow')
+                for index, value in enumerate(resultRow):
+                    s = resultRow[index].text.replace('\n', '    ')
+                    spl = s.split("    ")
+                    line = '{}|{}|{}|{}'.format(spl[0], spl[1], spl[2], s[s.find("[") + 1:-1].strip())
+                    print(line)
+                    Note.write(line+"\n")
         time.sleep(5)
-
-
+        # Note.flush()
+        Note.close()
+        return None
         # 收尾工作
-        i = 1
-        while 1==1 :
-            i = i + 1
-            time.sleep(3)
-            print('loop now')
-            if i > 100000:
-                break
+        # i = 1
+        # while 1 == 1:
+        #     i = i + 1
+        #     time.sleep(3)
+        #     print('loop now')
+        #     if i > 100000:
+        #         break
 
-a = mgrb_jw()
+
+a = MgrbJw()
 a.openChromeToTaobao()
