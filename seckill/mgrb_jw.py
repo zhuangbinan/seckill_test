@@ -135,7 +135,7 @@ class MgrbJw():
         time.sleep(2)
         # 开始处理
         # 0 到 最大值 , 递进1
-        for num in range(0, 6, 1):
+        for num in range(0, 156, 1):
             driver.switch_to.window(driver.window_handles[num])
             time.sleep(2)
             if MgrbJw.iselementByClassName(driver, 'resultRow'):
