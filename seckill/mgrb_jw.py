@@ -27,13 +27,6 @@ taobaoTime_url = 'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimest
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
 }
-# 获取今天预备抢购的日期
-now_time = datetime.datetime.now().strftime('%Y-%m-%d')
-# times=now_time+' 19:59:59.000000'
-# times=now_time+' 13:50:00.000000'
-# time_stamp = 1660651200000
-# 2022-08-23 19:59:57 时间戳如下
-sale_time_stamp = 1661255997000
 
 Note = open('1920Index.txt', mode='a', encoding='utf-8')
 
@@ -124,12 +117,6 @@ class MgrbJw():
         # 在js中，通过window.open打开新窗口
         # driver.execute_script("bksy.formPost('/logout')")
 
-        # 在js中，通过window.open打开新窗口
-        # newWindowUrl = "window.open('"+mgrb_jw_url4+"')"
-        # print(newWindowUrl)
-        # driver.execute_script(newWindowUrl)
-        # time.sleep(1)
-
         fp = open("1920totalUrl.txt", 'r', encoding='utf-8')
         i = 0
         for line in fp:
@@ -163,14 +150,6 @@ class MgrbJw():
         # Note.flush()
         Note.close()
         return None
-        # 收尾工作
-        # i = 1
-        # while 1 == 1:
-        #     i = i + 1
-        #     time.sleep(3)
-        #     print('loop now')
-        #     if i > 100000:
-        #         break
 
 
 a = MgrbJw()
