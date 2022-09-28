@@ -12,7 +12,6 @@ headers = {
 }
 
 
-
 class LotteryAssist:
 
     def iselementById(browser, id):
@@ -75,17 +74,16 @@ class LotteryAssist:
 
         # uid
         uid = None
-        bilibiliUrl = 'https://www.bilibili.com'
+        bilibili_url = 'https://www.bilibili.com'
         # 喵喵折APP 有个抽完的
         # 科技美学 有还没抽完的
-        driver.get(bilibiliUrl)
+        driver.get(bilibili_url)
         time.sleep(3)
-
 
         if LotteryAssist.iselementByClassName(driver, 'header-login-entry'):
             print('点击登录按钮', flush=True)
             driver.find_element(By.CLASS_NAME, 'header-login-entry').click()
-            while (1 == 1):
+            while 1 == 1:
                 if LotteryAssist.iselementByClassName(driver, 'header-avatar-wrap'):
                     print("已经登录")
                     break
@@ -241,7 +239,6 @@ class LotteryAssist:
                         print('没找到用户那一栏分类')
                         time.sleep(10)
 
-
                     time.sleep(10)
                 else:
                     print("没找到搜索按钮")
@@ -254,7 +251,6 @@ class LotteryAssist:
         else:
             print("没找到登录按钮")
             time.sleep(100)
-
 
 
 a = LotteryAssist()
