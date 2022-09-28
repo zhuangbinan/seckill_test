@@ -107,11 +107,12 @@ class LotteryAssist:
 
             time.sleep(3)
             # print("假如登录了")
+            search_text = '科技美学'
 
             if LotteryAssist.iselementByClassName(driver, 'nav-search-input'):
                 print("找到搜索框")
                 search_input = driver.find_element(By.CLASS_NAME, 'nav-search-input')
-                search_input.send_keys('科技美学')  # 应该要退到这一步来重新搜索
+                search_input.send_keys(search_text)
                 if LotteryAssist.iselementByClassName(driver, 'nav-search-btn'):
                     print("点击搜索按钮")
                     search_btn = driver.find_element(By.CLASS_NAME, 'nav-search-btn')
@@ -232,6 +233,7 @@ class LotteryAssist:
                                                             zf_submit_btn = driver.find_element(By.XPATH, zf_submit_xpath)
                                                             zf_submit_btn.click()
                                                             print('点击了转发提交按钮,完成1次抽奖任务')
+                                                            LotteryAssist.closeWindowWithOrder(driver)
                                             else:
                                                 print('点了关注按钮,但是没有关注成功')
                                                 LotteryAssist.closeWindowWithOrder(driver)
