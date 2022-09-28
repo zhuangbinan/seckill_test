@@ -56,9 +56,18 @@ class LotteryAssist:
         except:
             return False
 
-    def getRandomZfStr(broser, i):
+    def getRandomZfStr(browser, i):
         list = ['抽我抽我抽我', '抽我,抽我,抽我', '抽我请抽我抽我', '请抽我抽我抽我', '抽我抽我请抽我', '抽我,抽我,请抽我', '请抽我,不要客气', '让我看看是哪个luckyDog被抽中了', '分母集合', '偶尔也当一个分子啊']
         return list[i]
+
+    # 按顺序关闭窗口 closeWindowWithOrder
+    def closeWindowWithOrder(browser):
+        browser.switch_to.window(browser.window_handles[2])
+        browser.close()
+        browser.switch_to.window(browser.window_handles[1])
+        browser.close()
+        browser.switch_to.window(browser.window_handles[0])  # 然后continue
+        print('已有序关闭窗口')
 
     def openChromeToBilibili(self):
         # 使用开发者模式
@@ -173,6 +182,8 @@ class LotteryAssist:
                                         hdcj_flag = True
                                 except:
                                     print('不是互动抽奖,且异常')
+                                    LotteryAssist.closeWindowWithOrder(driver)
+                                    print('遇到异常,需要continue')
                                 if hdcj_flag:
                                     print('是互动抽奖')
                                     # 判断是否已开奖
@@ -223,32 +234,16 @@ class LotteryAssist:
                                                             print('点击了转发提交按钮,完成1次抽奖任务')
                                             else:
                                                 print('点了关注按钮,但是没有关注成功')
-                                                driver.switch_to.window(driver.window_handles[2])
-                                                driver.close()
-                                                driver.switch_to.window(driver.window_handles[1])
-                                                driver.close()
-                                                driver.switch_to.window(driver.window_handles[0])  # 然后continue
+                                                LotteryAssist.closeWindowWithOrder(driver)
                                         else:
                                             print('只想关注没关注的up的抽奖活动')
-                                            driver.switch_to.window(driver.window_handles[2])
-                                            driver.close()
-                                            driver.switch_to.window(driver.window_handles[1])
-                                            driver.close()
-                                            driver.switch_to.window(driver.window_handles[0])  # 然后continue
+                                            LotteryAssist.closeWindowWithOrder(driver)
                                     else:
                                         print('已经开奖了')
-                                        driver.switch_to.window(driver.window_handles[2])
-                                        driver.close()
-                                        driver.switch_to.window(driver.window_handles[1])
-                                        driver.close()
-                                        driver.switch_to.window(driver.window_handles[0])  # 然后continue
+                                        LotteryAssist.closeWindowWithOrder(driver)
                                 else:
                                     print('不是互动抽奖,可以结束当前窗口了')
-                                    driver.switch_to.window(driver.window_handles[2])
-                                    driver.close()
-                                    driver.switch_to.window(driver.window_handles[1])
-                                    driver.close()
-                                    driver.switch_to.window(driver.window_handles[0])   # 然后continue
+                                    LotteryAssist.closeWindowWithOrder(driver)
                             #  这里开始有0,1,2共3个窗口,1-b站主页,2-搜索结果页,3-动态页
                             else:
                                 print('没获取到第0个详情')
