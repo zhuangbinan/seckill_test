@@ -1,5 +1,7 @@
 
 import json
+import time
+
 import requests
 import requests.utils
 import http.cookiejar
@@ -42,9 +44,9 @@ resp.encoding = 'utf-8'
 print(resp)
 print(resp.encoding)
 text = resp.text
-print(text.encode(encoding='utf-8'))
-print(text)
-loaded = json.loads(resp.text)
+# print(text.encode(encoding='utf-8', errors='ignore'))
+# print(text)
+loaded = json.loads(text)
 print('解析json')
 record = loaded.get('data').get('result')
 if record[49].get('fans') > 10000:
@@ -53,6 +55,9 @@ if record[49].get('fans') > 10000:
     for i in record:
         print(i)
         uname2 = i.get('uname')
+        if uname2 == '未来科技王老菊录播组':
+            print('1111')
+            time.sleep(10)
         mid = i.get('mid')
         if ups_dict.get(uname2) is None:
             ups_dict[uname2] = mid
