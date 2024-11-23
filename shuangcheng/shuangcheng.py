@@ -57,12 +57,14 @@ def start(x1, x2, x3, x4, x5, y):
             green = 240 < thumb_color[1]
             blue = 210 < thumb_color[2]
 
-            # not_white_color
+            # not_white_color 白色背景会影响程序判断，对白色的处理
             if thumb_color[0] == 255 and thumb_color[1] == 255 and thumb_color[2] == 255:
+                pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+                time.sleep(2)
                 continue
             if thumb_color[0] == 245 and thumb_color[1] == 245 and thumb_color[2] == 245:
-                continue
-            if thumb_color[0] == thumb_color[2]:
+                pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+                time.sleep(2)
                 continue
 
             if red and green and blue:
