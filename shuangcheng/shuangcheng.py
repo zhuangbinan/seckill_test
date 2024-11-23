@@ -60,10 +60,12 @@ def start(x1, x2, x3, x4, x5, y):
             # not_white_color 白色背景会影响程序判断，对白色的处理
             if thumb_color[0] == 255 and thumb_color[1] == 255 and thumb_color[2] == 255:
                 pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+                print('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 time.sleep(2)
                 continue
             if thumb_color[0] == 245 and thumb_color[1] == 245 and thumb_color[2] == 245:
                 pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+                print('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 time.sleep(2)
                 continue
 
@@ -91,7 +93,7 @@ def start(x1, x2, x3, x4, x5, y):
         now = datetime.datetime.now()
         # 格式化时间为“时:分:秒”
         formatted_time = now.strftime("%H:%M:%S")
-        if now.second - init_sec >= 10:
+        if abs(now.second - init_sec) >= 10:
             # print("当前时间（时:分:秒）:", formatted_time)
             print("等待中", formatted_time)
             init_sec = now.second
