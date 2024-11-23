@@ -69,7 +69,9 @@ def start():
         (1300, 970),
         (1493, 970)
     )
-
+    # 记录打印日志时间，设置打印等待日志间隔
+    now = datetime.datetime.now()
+    init_sec = now.second
     while True:
         for index, thumb in enumerate(thumbs_x_y):
             thumb_color = pyautogui.pixel(thumb[0], thumb[1])
@@ -109,10 +111,10 @@ def start():
         # 获取当前时间
         now = datetime.datetime.now()
         # 格式化时间为“时:分:秒”
-        # formatted_time = now.strftime("%H:%M:%S")
-
-        if now.second % 10 == 0:
+        formatted_time = now.strftime("%H:%M:%S")
+        if now.second - init_sec >= 10:
             # print("当前时间（时:分:秒）:", formatted_time)
-            print("等待中")
+            print("等待中", formatted_time)
+            init_sec = now.second
 
 start()
