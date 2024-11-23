@@ -1,73 +1,49 @@
 import time
 
 import pyautogui
-from pynput import keyboard
 import datetime
 
-# 获取当前时间
-# now = datetime.datetime.now()
-
-# 格式化时间为“时:分:秒”
-# formatted_time = now.strftime("%H:%M:%S")
-
-# 单独获取秒数
-# seconds = now.second
-
-# print("当前时间（时:分:秒）:", formatted_time)
-# print("当前秒数:", seconds)
 
 print('请在1920×1080分辨率下打开金铲铲游戏模拟器全屏进行游戏')
 # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
 screen_width, screen_height = pyautogui.size()
-print('Hello 双城之战!', '屏幕宽度：', screen_width, '屏幕高度：', screen_height)
+welcome = 'Hello 双城之战!您当前屏幕宽度：' + str(screen_width) + '屏幕高度：' + str(screen_height)
+pyautogui.alert(welcome)
 
-time.sleep(2)
-# allTitles = pyautogui.getAllWindows()
-# active_win = pyautogui.getActiveWindowTitle()
-# print(active_win)
-# print(type(allTitles))
-#
-# print(type(allTitles[0]))
-
-# for t in allTitles:
-#     print(t)
+time.sleep(1)
 
 win = pyautogui.getWindowsWithTitle('雷电模拟器')
-
-# game_window_list = pyautogui.getWindowsWithTitle('腾讯手游助手(64位)')
 
 if len(win) > 0:
     print('找到游戏窗口了')
 else:
     raise BaseException("没有找到游戏窗口")
+# 将游戏窗口最大化，使窗口处于最前面
 win[0].maximize()
 win[0].activate()
 
 
-def start():
-    # 框靠右边的时候的分辨率
-    thumbs_x_y = (
-        (842, 936),
-        (1026, 936),
-        (1210, 936),
-        (1394, 936),
-        (1578, 936)
-    )
-    # 1920*10805个大拇指的坐标 702,1005;910,1005; 1118,1005; 1326,1005; 1534,1005;
-    thumbs_x_y = (
-        (702, 1005),
-        (910, 1005),
-        (1118, 1005),
-        (1320, 1005),
-        (1534, 1005)
-    )
+# 校验坐标要有值 定义一个校验函数
+def is_valid_number(value):
+    # 检查是否为数字类型（int 或 float）且不是 None
+    return isinstance(value, (int, float)) and value is not None
 
+
+def start(x1, x2, x3, x4, x5, y):
+    # 校验所有 x 坐标和 y 坐标
+    if not all(is_valid_number(x) for x in [x1, x2, x3, x4, x5]):
+        raise ValueError("所有 x 坐标都必须是数字且不能为空")
+
+    if not is_valid_number(y):
+        raise ValueError("y 坐标必须是数字且不能为空")
+
+    # 5个大拇指坐标,x坐标不同,y坐标一样，都是一条水平线上的
     thumbs_x_y = (
-        (720, 970),
-        (914, 970),
-        (1107, 970),
-        (1300, 970),
-        (1493, 970)
+        (x1, y),
+        (x2, y),
+        (x3, y),
+        (x4, y),
+        (x5, y)
     )
     # 记录打印日志时间，设置打印等待日志间隔
     now = datetime.datetime.now()
@@ -76,6 +52,7 @@ def start():
         for index, thumb in enumerate(thumbs_x_y):
             thumb_color = pyautogui.pixel(thumb[0], thumb[1])
             # print(thumb_color[0] > 240, thumb_color[1] > 240, thumb_color[2] > 200)
+            # RGB三色
             red = 240 < thumb_color[0]
             green = 240 < thumb_color[1]
             blue = 210 < thumb_color[2]
@@ -117,4 +94,11 @@ def start():
             print("等待中", formatted_time)
             init_sec = now.second
 
-start()
+# x1 = 720
+# x2 = 914
+# x3 = 1107
+# x4 = 1300
+# x5 = 1493
+# y坐标
+# y = 970
+start(720, 914, 1107, 1300, 1493, 970)
