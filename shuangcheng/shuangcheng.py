@@ -3,7 +3,6 @@ import time
 import pyautogui
 import datetime
 
-
 print('请在1920×1080分辨率下打开金铲铲游戏模拟器全屏进行游戏')
 # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
 screen_width, screen_height = pyautogui.size()
@@ -29,14 +28,14 @@ def is_valid_number(value):
     return isinstance(value, (int, float)) and value is not None
 
 
-def start(x1, x2, x3, x4, x5, y):
+# 检查入参
+def check_input_params(x1, x2, x3, x4, x5, y):
     # 校验所有 x 坐标和 y 坐标
     if not all(is_valid_number(x) for x in [x1, x2, x3, x4, x5]):
         raise ValueError("所有 x 坐标都必须是数字且不能为空")
 
     if not is_valid_number(y):
         raise ValueError("y 坐标必须是数字且不能为空")
-
     # 5个大拇指坐标,x坐标不同,y坐标一样，都是一条水平线上的
     thumbs_x_y = (
         (x1, y),
@@ -45,6 +44,10 @@ def start(x1, x2, x3, x4, x5, y):
         (x4, y),
         (x5, y)
     )
+    return thumbs_x_y
+
+
+def start(thumbs_x_y):
     # 记录打印日志时间，设置打印等待日志间隔
     now = datetime.datetime.now()
     init_sec = now.second
@@ -98,6 +101,8 @@ def start(x1, x2, x3, x4, x5, y):
             print("等待中", formatted_time)
             init_sec = now.second
 
+# 用来遍历的
+list_6 = [1,2,3,4,5,6]
 # x1 = 720
 # x2 = 914
 # x3 = 1107
@@ -105,4 +110,29 @@ def start(x1, x2, x3, x4, x5, y):
 # x5 = 1493
 # y坐标
 # y = 970
-start(720, 914, 1107, 1300, 1493, 970)
+x1 = -1
+x2 = -1
+x3 = -1
+x4 = -1
+x5 = -1
+y = -1
+# 打开文件并逐行读取
+with open('thumbs_x_y.txt', 'r') as file:
+    for i, item in enumerate(list_6):
+        line = file.readline()
+        # print(line, end='')  # `end=''`用于避免打印额外的换行符
+        # print('序号：', i, '值:', item)
+        if i == 0:
+            x1 = int(line)
+        if i == 1:
+            x2 = int(line)
+        if i == 2:
+            x3 = int(line)
+        if i == 3:
+            x4 = int(line)
+        if i == 4:
+            x5 = int(line)
+        if i == 5:
+            y = int(line)
+
+start(check_input_params(x1, x2, x3, x4, x5, y))
