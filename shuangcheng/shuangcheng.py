@@ -3,20 +3,20 @@ import time
 import pyautogui
 import datetime
 
-print('请在1920×1080分辨率下打开金铲铲游戏模拟器全屏进行游戏')
+print('请在关注您的分辨率，打开金铲铲游戏模拟器最大化窗口进行游戏')
 # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
 screen_width, screen_height = pyautogui.size()
-welcome = 'Hello 双城之战!您当前屏幕宽度：' + str(screen_width) + '屏幕高度：' + str(screen_height)
+welcome = 'Hello 双城之战!您当前屏幕像素宽度：' + str(screen_width) + '屏幕高度：' + str(screen_height)
 pyautogui.alert(welcome)
 
 time.sleep(1)
-
+# 获取雷电模拟器
 win = pyautogui.getWindowsWithTitle('雷电模拟器')
 
 if len(win) > 0:
-    print('找到游戏窗口了')
+    print('找到雷电模拟器窗口了')
 else:
-    raise BaseException("没有找到游戏窗口")
+    raise BaseException("没有找到雷电模拟器窗口")
 # 将游戏窗口最大化，使窗口处于最前面
 win[0].maximize()
 win[0].activate()
@@ -62,12 +62,10 @@ def start(thumbs_x_y):
 
             # not_white_color 白色背景会影响程序判断，对白色的处理
             if thumb_color[0] == 255 and thumb_color[1] == 255 and thumb_color[2] == 255:
-                pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 print('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 time.sleep(2)
                 continue
             if thumb_color[0] == 245 and thumb_color[1] == 245 and thumb_color[2] == 245:
-                pyautogui.alert('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 print('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
                 time.sleep(2)
                 continue
@@ -101,8 +99,9 @@ def start(thumbs_x_y):
             print("等待中", formatted_time)
             init_sec = now.second
 
+
 # 用来遍历的
-list_6 = [1,2,3,4,5,6]
+list_6 = [1, 2, 3, 4, 5, 6]
 # x1 = 720
 # x2 = 914
 # x3 = 1107
