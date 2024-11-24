@@ -3,7 +3,12 @@ import time
 import pyautogui
 import datetime
 
-print('请在关注您的分辨率，打开金铲铲游戏模拟器最大化窗口进行游戏')
+print('请关注您的分辨率，此程序需要配合thumbs_x_y.txt文件同时使用')
+print('简介：thumbs_x_y.txt文件')
+print('此文件为配置文件，内容一共6行')
+print('前5行为金铲铲内置助手大拇指在你电脑上的x坐标')
+print('第6行为y坐标，y坐标只有1个，因为5个大拇指都是在同一水平线上的')
+print('注意：此文件放在和.exe文件同级目录下，没有此文件，程序无法正常运行')
 # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
 screen_width, screen_height = pyautogui.size()
 welcome = 'Hello 双城之战!您当前屏幕像素宽度：' + str(screen_width) + '屏幕高度：' + str(screen_height)
