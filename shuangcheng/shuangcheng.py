@@ -5,6 +5,8 @@ import datetime
 from paddleocr import PaddleOCR
 import threading
 
+
+# 程序入口
 def main():
     print('请关注您的分辨率，此程序需要配合thumbs_x_y.txt文件同时使用')
     print('简介：thumbs_x_y.txt文件')
@@ -68,6 +70,7 @@ def main():
 
     thread1.join()
     thread2.join()
+
 
 # 校验坐标要有值 定义一个校验函数
 def is_valid_number(value):
