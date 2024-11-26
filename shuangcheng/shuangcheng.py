@@ -4,15 +4,23 @@ import pyautogui
 import datetime
 from paddleocr import PaddleOCR
 import threading
+import logging
+
+# 控制识别组件日志频率
+logging.basicConfig(level=logging.INFO)
+# 假设ppocr使用的是名为'ppocr'的logger
+logger_ppocr = logging.getLogger('ppocr')
+logger_ppocr.setLevel(logging.INFO)
 
 
 # 程序入口
 def main():
     print('请关注您的分辨率，此程序需要配合thumbs_x_y.txt文件同时使用')
     print('简介：thumbs_x_y.txt文件')
-    print('此文件为配置文件，内容一共6行')
+    print('此文件为配置文件，内容一共7行')
     print('前5行为金铲铲内置助手大拇指在你电脑上的x坐标')
     print('第6行为y坐标，y坐标只有1个，因为5个大拇指都是在同一水平线上的')
+    print('第7行为异常突变名称，填入您想要选择的异常突变名称，如：魔法训练')
     print('注意：此文件放在和.exe文件同级目录下，没有此文件，程序无法正常运行')
     # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
     screen_width, screen_height = pyautogui.size()
@@ -99,12 +107,10 @@ def check_input_params(x1, x2, x3, x4, x5, y):
 
 # 拿卡
 def get_cards(thumbs_x_y):
-    get_cards_count = 3600
     # 记录打印日志时间，设置打印等待日志间隔
     now = datetime.datetime.now()
     init_sec = now.second
-    while get_cards_count != 0:
-        get_cards_count = get_cards_count - 1
+    while True:
         for index, thumb in enumerate(thumbs_x_y):
             thumb_color = pyautogui.pixel(thumb[0], thumb[1])
             # print(thumb_color[0] > 240, thumb_color[1] > 240, thumb_color[2] > 200)
@@ -161,7 +167,7 @@ def get_yctb(param_yctb_name):
         # 702
         left4_6 = 686
         top4_6 = 42
-        width4_6 = 50
+        width4_6 = 60
         height4_6 = 25
 
         # 异常突变 名称 出现的位置 一个字 宽38
@@ -212,6 +218,7 @@ def get_yctb(param_yctb_name):
         print('异常突变 参数有误 None')
     if param_yctb_name == '':
         print("异常突变 参数没填")
+
 
 if __name__ == '__main__':
     main()
