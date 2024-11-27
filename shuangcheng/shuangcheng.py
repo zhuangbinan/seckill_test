@@ -155,7 +155,7 @@ def get_cards(thumbs_x_y):
         formatted_time = now.strftime("%H:%M:%S")
         if abs(now.second - init_sec) >= 10:
             # print("当前时间（时:分:秒）:", formatted_time)
-            print("等待中", formatted_time)
+            print("da等待大拇指出现...", formatted_time)
             init_sec = now.second
 
 
@@ -180,8 +180,13 @@ def get_yctb(param_yctb_name):
         ocr_en = PaddleOCR(use_angle_cls=True, lang="en")
         ocr = PaddleOCR(use_angle_cls=True, lang="ch")
         stage_flag = False
+        # 记录打印日志时间，设置打印等待日志间隔
+        now = datetime.datetime.now()
+        init_sec1 = now.second
+        init_sec2 = now.second
         # 判断回合数 阶段数
         while True:
+            time.sleep(0.1)
             screen4_6 = pyautogui.screenshot(region=(left4_6, top4_6, width4_6, height4_6))
             screen4_6.save(f"stage_screenshot4_6.png")
 
@@ -192,28 +197,49 @@ def get_yctb(param_yctb_name):
             ocr_en_result = ocr_en_result_list[0]
             if ocr_en_result is not None:
                 stage_num = ocr_en_result[0][1][0]
+
+                if stage_num is not None and str(stage_num).startswith('2'):
+                    print('ocr二阶段,睡眠20s,开始时间：', datetime.datetime.now().strftime("%H:%M:%S"))
+                    time.sleep(20)
+                    print('ocr二阶段,睡眠20s,结束时间：', datetime.datetime.now().strftime("%H:%M:%S"))
+                if stage_num is not None and str(stage_num).startswith('3'):
+                    print('ocr三阶段,睡眠20s,开始时间：', datetime.datetime.now().strftime("%H:%M:%S"))
+                    time.sleep(20)
+                    print('ocr三阶段,睡眠20s,结束时间：', datetime.datetime.now().strftime("%H:%M:%S"))
                 # 4-6
-                print('截取回合数：', stage_num)
                 if '4-6' == stage_num:
-                    print('到4-6阶段')
+                    print('ocr到4-6阶段')
                     stage_flag = True
-                    break
-                # if stage_num is not None and str(stage_num).startswith('2'):
-                #     time.sleep(60)
-                # if stage_num is not None and str(stage_num).startswith('3'):
-                #     time.sleep(60)
-        # 判断 异常突变 名称
-        while stage_flag:
-            ocr_result_list = ocr.ocr('yctb_screenshot.png', cls=True)
-            ocr_result = ocr_result_list[0]
-            if ocr_result is not None:
-                # 异常突变名6称str
-                print('异常突变名称:', ocr_result[0][1][0])
-                if param_yctb_name == ocr_result[0][1][0]:
-                    print('====名称对上了，准备按钮6===')
-                    pyautogui.press('6')
-                    stage_flag = False
-                    print('****按了6，异常突变进程结束！****')
+                    # 判断 异常突变 名称
+                    while stage_flag:
+                        ocr_result_list = ocr.ocr('yctb_screenshot.png', cls=True)
+                        ocr_result = ocr_result_list[0]
+                        if ocr_result is not None:
+                            # 异常突变名6称str
+                            print('异常突变名称:', ocr_result[0][1][0])
+                            if param_yctb_name == ocr_result[0][1][0]:
+                                print('====名称对上了，准备按钮6===')
+                                pyautogui.press('6')
+                                stage_flag = False
+                                print('****按了6，异常突变进程结束！****')
+                else:
+                    # 获取当前时间
+                    now = datetime.datetime.now()
+                    # 格式化时间为“时:分:秒”
+                    formatted_time = now.strftime("%H:%M:%S")
+                    if abs(now.second - init_sec2) >= 10:
+                        print('ocr截取回合数：', stage_num, "等待匹配到正确的回合数", formatted_time)
+                        init_sec2 = now.second
+            else:
+                # 获取当前时间
+                now = datetime.datetime.now()
+                # 格式化时间为“时:分:秒”
+                formatted_time = now.strftime("%H:%M:%S")
+                if abs(now.second - init_sec1) >= 10:
+                    # print("当前时间（时:分:秒）:", formatted_time)
+                    print("ocr等待指定回合数位置有识别的字符", formatted_time)
+                    init_sec1 = now.second
+
     if param_yctb_name is None:
         print('异常突变 参数有误 None')
     if param_yctb_name == '':
