@@ -13,6 +13,10 @@ logger_ppocr = logging.getLogger('ppocr')
 logger_ppocr.setLevel(logging.INFO)
 
 
+# 记录打印日志时间，设置打印等待日志间隔
+global_now = datetime.datetime.now()
+global_init_sec = global_now.second
+
 # 程序入口
 def main():
     print('请关注您的分辨率，此程序需要配合thumbs_x_y.txt文件同时使用')
@@ -69,14 +73,6 @@ def main():
                 yctb_name = line
 
     get_cards_param = check_input_params(x1, x2, x3, x4, x5, y)
-    # 创建线程对象
-    # thread1 = threading.Thread(target=get_cards, args=(get_cards_param,))
-    # thread2 = threading.Thread(target=get_yctb, args=(yctb_name,))
-    # 启动线程
-    # thread1.start()
-    # thread2.start()
-    # thread1.join()
-    # thread2.join()
     get_cards_and_yctb(get_cards_param, yctb_name)
 
 
@@ -106,10 +102,9 @@ def check_input_params(x1, x2, x3, x4, x5, y):
 
 
 def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
+    if param_yctb_name is None:
+        param_yctb_name = ''
     print(f'get_cards_and_yctb：{thumbs_x_y},{param_yctb_name}')
-    # 记录打印日志时间，设置打印等待日志间隔
-    now = datetime.datetime.now()
-    init_sec = now.second
 
     # 4-6阶段有异常突变，记录4-6出现的位置
     # 702
@@ -129,7 +124,10 @@ def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
     ocr = PaddleOCR(use_angle_cls=True, lang="ch")
     stage_flag = False
     # 记录打印日志时间，设置打印等待日志间隔
-    init_sec2 = now.second
+    # 记录打印日志时间，设置打印等待日志间隔
+    init_sec2 = datetime.datetime.now().second
+    yctb_stage = '4-6'
+    yctb_stage_recycle = '4-6'
     while True:
         time.sleep(0.1)
         screen4_6 = pyautogui.screenshot(region=(left4_6, top4_6, width4_6, height4_6))
@@ -144,13 +142,15 @@ def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
             # 捕获到字符了
             stage_num = ocr_en_result[0][1][0]
             # 4-6
-            if '4-6' == stage_num:
+            if yctb_stage == stage_num:
                 print('ocr到4-6阶段')
                 stage_flag = True
                 # 记录开始时间的时间戳
                 start_time = time.time()
                 # 判断 异常突变 名称
                 while stage_flag:
+                    screen4_6 = pyautogui.screenshot(region=(left_yctb, top_yctb, width_yctb, height_yctb))
+                    screen4_6.save(f"yctb_screenshot.png")
                     ocr_result_list = ocr.ocr('yctb_screenshot.png', cls=True)
                     ocr_result = ocr_result_list[0]
                     if ocr_result is not None:
@@ -160,15 +160,35 @@ def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
                         time_difference = current_time - start_time
                         # 判断时间差是否达到或超过57秒 # 退出循环
                         if time_difference >= 57:
-                            break
+                            print('4-6选择异常突变超时')
+                            stage_flag = False
+                            yctb_stage = ''
                         # 异常突变名6称str
                         print('异常突变名称:', ocr_result[0][1][0])
-                        if param_yctb_name[:3] == ocr_result[0][1][0]:
-                            print('====名称对上了，准备按钮6===')
-                            pyautogui.press('6')
-                            stage_flag = False
-                            print('****按了6，异常突变进程结束！****')
+                        # 最长5个字的，最短2个字的； 2个字的会俩字（
+                        # 先对上2个字 3个字的又2个魔法训练，魔法专家
+                        if len(str(ocr_result[0][1][0])) == 3:
+                            if param_yctb_name[:3] == ocr_result[0][1][0]:
+                                print('====名称对上了，准备按钮6===')
+                                pyautogui.press('6')
+                                stage_flag = False
+                                yctb_stage = ''
+                                print('****按了6，异常突变暂时结束！****')
+                        if len(str(ocr_result[0][1][0])) > 3:
+                            if param_yctb_name[:2] == str(ocr_result[0][1][0])[:2]:
+                                print('====名称对上了，准备按钮6===')
+                                pyautogui.press('6')
+                                stage_flag = False
+                                yctb_stage = ''
+                                print('****按了6，异常突变暂时结束！****')
             else:
+                # 不是4-6，但是是2和3阶段
+                if stage_num is not None and str(stage_num).startswith('2-'):
+                    print('ocr二阶段,时间：', datetime.datetime.now().strftime("%H:%M:%S"))
+                    yctb_stage = yctb_stage_recycle
+                if stage_num is not None and str(stage_num).startswith('3-'):
+                    print('ocr三阶段,时间：', datetime.datetime.now().strftime("%H:%M:%S"))
+                    yctb_stage = yctb_stage_recycle
                 # 获取当前时间
                 now = datetime.datetime.now()
                 # 格式化时间为“时:分:秒”
@@ -184,13 +204,10 @@ def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
 
 
 def get_cards_new(thumbs_x_y):
-    print('get_cards_five_times invoke.')
-    # 记录打印日志时间，设置打印等待日志间隔
-    now = datetime.datetime.now()
-    init_sec = now.second
+    global global_init_sec
     for index, thumb in enumerate(thumbs_x_y):
         thumb_color = pyautogui.pixel(thumb[0], thumb[1])
-        print(index, f'x={thumb[0]},y={thumb[1]}', thumb_color[0], thumb_color[1], thumb_color[2])
+        # print(index, f'x={thumb[0]},y={thumb[1]}', thumb_color[0], thumb_color[1], thumb_color[2])
         # RGB三色
         red = 240 < thumb_color[0]
         green = 240 < thumb_color[1]
@@ -225,15 +242,14 @@ def get_cards_new(thumbs_x_y):
             if index == 4:
                 print('按键5')
                 pyautogui.press('5')
-
     # 获取当前时间
     now = datetime.datetime.now()
     # 格式化时间为“时:分:秒”
     formatted_time = now.strftime("%H:%M:%S")
-    if abs(now.second - init_sec) >= 2:
+    if abs(now.second - global_init_sec) >= 10:
         # print("当前时间（时:分:秒）:", formatted_time)
         print("da等待大拇指出现...", formatted_time)
-        init_sec = now.second
+        global_init_sec = now.second
 # 拿卡
 def get_cards(thumbs_x_y):
     # 记录打印日志时间，设置打印等待日志间隔
