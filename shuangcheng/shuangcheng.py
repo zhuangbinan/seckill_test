@@ -25,7 +25,7 @@ def main():
     # 获取屏幕分辨率（宽高） Size(width=1920, height=1080)
     screen_width, screen_height = pyautogui.size()
     welcome = 'Hello 双城之战!您当前屏幕像素宽度：' + str(screen_width) + '屏幕高度：' + str(screen_height)
-    pyautogui.alert(welcome)
+    # pyautogui.alert(welcome)
 
     time.sleep(1)
     # 获取雷电模拟器
@@ -70,14 +70,14 @@ def main():
 
     get_cards_param = check_input_params(x1, x2, x3, x4, x5, y)
     # 创建线程对象
-    thread1 = threading.Thread(target=get_cards, args=(get_cards_param,))
-    thread2 = threading.Thread(target=get_yctb, args=(yctb_name,))
+    # thread1 = threading.Thread(target=get_cards, args=(get_cards_param,))
+    # thread2 = threading.Thread(target=get_yctb, args=(yctb_name,))
     # 启动线程
-    thread1.start()
-    thread2.start()
-
-    thread1.join()
-    thread2.join()
+    # thread1.start()
+    # thread2.start()
+    # thread1.join()
+    # thread2.join()
+    get_cards_and_yctb(get_cards_param, yctb_name)
 
 
 # 校验坐标要有值 定义一个校验函数
@@ -105,6 +105,135 @@ def check_input_params(x1, x2, x3, x4, x5, y):
     return thumbs_x_y
 
 
+def get_cards_and_yctb(thumbs_x_y, param_yctb_name):
+    print(f'get_cards_and_yctb：{thumbs_x_y},{param_yctb_name}')
+    # 记录打印日志时间，设置打印等待日志间隔
+    now = datetime.datetime.now()
+    init_sec = now.second
+
+    # 4-6阶段有异常突变，记录4-6出现的位置
+    # 702
+    left4_6 = 686
+    top4_6 = 42
+    width4_6 = 60
+    height4_6 = 25
+
+    # 异常突变 名称 出现的位置 一个字 宽38
+    left_yctb = 574
+    top_yctb = 870
+    width_yctb = 118
+    height_yctb = 36
+
+    # 4-6得算作英文来识别
+    ocr_en = PaddleOCR(use_angle_cls=True, lang="en")
+    ocr = PaddleOCR(use_angle_cls=True, lang="ch")
+    stage_flag = False
+    # 记录打印日志时间，设置打印等待日志间隔
+    init_sec2 = now.second
+    while True:
+        time.sleep(0.1)
+        screen4_6 = pyautogui.screenshot(region=(left4_6, top4_6, width4_6, height4_6))
+        screen4_6.save(f"stage_screenshot4_6.png")
+
+        screen4_6 = pyautogui.screenshot(region=(left_yctb, top_yctb, width_yctb, height_yctb))
+        screen4_6.save(f"yctb_screenshot.png")
+
+        ocr_en_result_list = ocr_en.ocr('stage_screenshot4_6.png', cls=True)
+        ocr_en_result = ocr_en_result_list[0]
+        if ocr_en_result is not None:
+            # 捕获到字符了
+            stage_num = ocr_en_result[0][1][0]
+            # 4-6
+            if '4-6' == stage_num:
+                print('ocr到4-6阶段')
+                stage_flag = True
+                # 记录开始时间的时间戳
+                start_time = time.time()
+                # 判断 异常突变 名称
+                while stage_flag:
+                    ocr_result_list = ocr.ocr('yctb_screenshot.png', cls=True)
+                    ocr_result = ocr_result_list[0]
+                    if ocr_result is not None:
+                        # 获取当前时间的时间戳
+                        current_time = time.time()
+                        # 计算时间差
+                        time_difference = current_time - start_time
+                        # 判断时间差是否达到或超过57秒 # 退出循环
+                        if time_difference >= 57:
+                            break
+                        # 异常突变名6称str
+                        print('异常突变名称:', ocr_result[0][1][0])
+                        if param_yctb_name[:3] == ocr_result[0][1][0]:
+                            print('====名称对上了，准备按钮6===')
+                            pyautogui.press('6')
+                            stage_flag = False
+                            print('****按了6，异常突变进程结束！****')
+            else:
+                # 获取当前时间
+                now = datetime.datetime.now()
+                # 格式化时间为“时:分:秒”
+                formatted_time = now.strftime("%H:%M:%S")
+                if abs(now.second - init_sec2) >= 10:
+                    print('ocr截取回合数：', stage_num, "等待匹配到正确的回合数", formatted_time)
+                    init_sec2 = now.second
+                # 没有捕获4-6阶段的字符,执行拿卡操作
+                get_cards_new(thumbs_x_y)
+        else:
+            # 没有捕获到阶段的字符,执行拿卡操作
+            get_cards_new(thumbs_x_y)
+
+
+def get_cards_new(thumbs_x_y):
+    print('get_cards_five_times invoke.')
+    # 记录打印日志时间，设置打印等待日志间隔
+    now = datetime.datetime.now()
+    init_sec = now.second
+    for index, thumb in enumerate(thumbs_x_y):
+        thumb_color = pyautogui.pixel(thumb[0], thumb[1])
+        print(index, f'x={thumb[0]},y={thumb[1]}', thumb_color[0], thumb_color[1], thumb_color[2])
+        # RGB三色
+        red = 240 < thumb_color[0]
+        green = 240 < thumb_color[1]
+        blue = 205 < thumb_color[2]
+
+        # not_white_color 白色背景会影响程序判断，对白色的处理
+        if thumb_color[0] == 255 and thumb_color[1] == 255 and thumb_color[2] == 255:
+            print('当前屏幕显示背景在5个大拇指的位置有白色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+            time.sleep(3)
+            continue
+        if thumb_color[0] == 245 and thumb_color[1] == 245 and thumb_color[2] == 245:
+            print('当前屏幕显示背景在5个大拇指的位置有杂色，请使用ALT+Tab组合键切出此窗口或关闭程序')
+            time.sleep(3)
+            continue
+
+        if red and green and blue:
+            print(index, "真的有true,即将点击", thumb[0], thumb[1])
+            # pyautogui.click(thumb[0], thumb[1])
+            # 改为模拟键盘按钮
+            if index == 0:
+                print('按键1')
+                pyautogui.press('1')
+            if index == 1:
+                print('按键2')
+                pyautogui.press('2')
+            if index == 2:
+                print('按键3')
+                pyautogui.press('3')
+            if index == 3:
+                print('按键4')
+                pyautogui.press('4')
+            if index == 4:
+                print('按键5')
+                pyautogui.press('5')
+
+    # 获取当前时间
+    now = datetime.datetime.now()
+    # 格式化时间为“时:分:秒”
+    formatted_time = now.strftime("%H:%M:%S")
+    if abs(now.second - init_sec) >= 2:
+        # print("当前时间（时:分:秒）:", formatted_time)
+        print("da等待大拇指出现...", formatted_time)
+        init_sec = now.second
 # 拿卡
 def get_cards(thumbs_x_y):
     # 记录打印日志时间，设置打印等待日志间隔
