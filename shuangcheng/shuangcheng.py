@@ -224,24 +224,10 @@ def get_cards_new(thumbs_x_y):
             continue
 
         if red and green and blue:
-            print(index, "真的有true,即将点击", thumb[0], thumb[1])
+            print(index+1, "真的有true,即将点击", thumb[0], thumb[1])
             # pyautogui.click(thumb[0], thumb[1])
             # 改为模拟键盘按钮
-            if index == 0:
-                print('按键1')
-                pyautogui.press('1')
-            if index == 1:
-                print('按键2')
-                pyautogui.press('2')
-            if index == 2:
-                print('按键3')
-                pyautogui.press('3')
-            if index == 3:
-                print('按键4')
-                pyautogui.press('4')
-            if index == 4:
-                print('按键5')
-                pyautogui.press('5')
+            pyautogui.press(str(index+1))
     # 获取当前时间
     now = datetime.datetime.now()
     # 格式化时间为“时:分:秒”
