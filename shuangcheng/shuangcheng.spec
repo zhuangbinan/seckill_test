@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='TKinter_Test',
+    name='shuangcheng',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
